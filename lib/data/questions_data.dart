@@ -87,6 +87,12 @@ final List<GameQuestion> spicyQuestions = [
     QuestionOption("Less is more", weight: 4),
     QuestionOption("I'll show you later", weight: 4),
   ]),
+  GameQuestion(branch: QuestionBranch.spicy, level: 1, text: "Do you prefer the chase or the catch?", options: [
+    QuestionOption("The chase. I love the tension.", weight: 3),
+    QuestionOption("The catch. I like knowing I've won.", weight: 4),
+    QuestionOption("Both.", weight: 4),
+    QuestionOption("I prefer when there's no finish line.", weight: 5),
+  ]),
 
   // Level 2
   GameQuestion(branch: QuestionBranch.spicy, level: 2, text: "What's your favorite place to be kissed?", options: [
@@ -101,6 +107,12 @@ final List<GameQuestion> spicyQuestions = [
     QuestionOption("Kissing me", weight: 4),
     QuestionOption("Something we shouldn't say out loud", weight: 5),
     QuestionOption("The same thing I am", weight: 4),
+  ]),
+  GameQuestion(branch: QuestionBranch.spicy, level: 2, text: "What's the sexiest thing someone can whisper to you?", options: [
+    QuestionOption("Tell me what you want.", weight: 3),
+    QuestionOption("I can't stop thinking about you.", weight: 4),
+    QuestionOption("Don't stop.", weight: 5),
+    QuestionOption("You have no idea what you do to me.", weight: 5),
   ]),
 
   // Level 3
@@ -117,6 +129,12 @@ final List<GameQuestion> spicyQuestions = [
     QuestionOption("I'm waiting for them to make the first move", weight: 4),
     QuestionOption("I'm already imagining it", weight: 5),
   ]),
+  GameQuestion(branch: QuestionBranch.spicy, level: 3, text: "What's a fantasy you've never told anyone?", options: [
+    QuestionOption("Being in charge.", weight: 4),
+    QuestionOption("Being taken.", weight: 5),
+    QuestionOption("Something involving a public place.", weight: 5),
+    QuestionOption("I'll show you instead.", weight: 5),
+  ]),
 
   // Level 4
   GameQuestion(branch: QuestionBranch.spicy, level: 4, text: "What's your biggest turn-on?", options: [
@@ -125,6 +143,12 @@ final List<GameQuestion> spicyQuestions = [
     QuestionOption("Being wanted", weight: 5),
     QuestionOption("You", weight: 5),
   ]),
+  GameQuestion(branch: QuestionBranch.spicy, level: 4, text: "If I gave you full control for 5 minutes, what would you do?", options: [
+    QuestionOption("Kiss every inch of your face.", weight: 4),
+    QuestionOption("Whisper exactly what I want.", weight: 5),
+    QuestionOption("Make you beg.", weight: 5),
+    QuestionOption("I don't need 5 minutes.", weight: 5),
+  ]),
 
   // Level 5
   GameQuestion(branch: QuestionBranch.spicy, level: 5, text: "If we were alone right now, what would you do?", options: [
@@ -132,6 +156,12 @@ final List<GameQuestion> spicyQuestions = [
     QuestionOption("Take my time", weight: 5),
     QuestionOption("Let you take control", weight: 5),
     QuestionOption("I already have a plan", weight: 5),
+  ]),
+  GameQuestion(branch: QuestionBranch.spicy, level: 5, text: "What's the one thing that would make you lose control?", options: [
+    QuestionOption("A touch in the right place.", weight: 5),
+    QuestionOption("A specific word whispered.", weight: 5),
+    QuestionOption("Knowing you want me as much as I want you.", weight: 5),
+    QuestionOption("You.", weight: 5),
   ]),
 ];
 
@@ -166,6 +196,12 @@ final List<GameQuestion> deepQuestions = [
     QuestionOption("Getting hurt", weight: 3),
     QuestionOption("Never finding what we have right now", weight: 4),
   ]),
+  GameQuestion(branch: QuestionBranch.deep, level: 2, text: "What's a lie you tell yourself?", options: [
+    QuestionOption("That I'm fine on my own.", weight: 3),
+    QuestionOption("That I don't care what people think.", weight: 3),
+    QuestionOption("That I have all the time in the world.", weight: 4),
+    QuestionOption("That I'm not looking for something real.", weight: 4),
+  ]),
 
   // Level 3
   GameQuestion(branch: QuestionBranch.deep, level: 3, text: "What does love mean to you?", options: [
@@ -181,6 +217,12 @@ final List<GameQuestion> deepQuestions = [
     QuestionOption("How they make me feel", weight: 4),
     QuestionOption("Everything", weight: 4),
   ]),
+  GameQuestion(branch: QuestionBranch.deep, level: 3, text: "When was the last time you cried and why?", options: [
+    QuestionOption("A long time ago.", weight: 2),
+    QuestionOption("Recently. Because I was overwhelmed.", weight: 4),
+    QuestionOption("Recently. Because I was moved by something beautiful.", weight: 3),
+    QuestionOption("I don't remember.", weight: 2),
+  ]),
 
   // Level 4
   GameQuestion(branch: QuestionBranch.deep, level: 4, text: "What's something you've never told anyone?", options: [
@@ -189,6 +231,12 @@ final List<GameQuestion> deepQuestions = [
     QuestionOption("A dream I'm afraid to say out loud", weight: 4),
     QuestionOption("How much this means to me", weight: 5),
   ]),
+  GameQuestion(branch: QuestionBranch.deep, level: 4, text: "What's the hardest lesson you've had to learn?", options: [
+    QuestionOption("That people leave.", weight: 4),
+    QuestionOption("That I can't save everyone.", weight: 4),
+    QuestionOption("That being nice isn't the same as being good.", weight: 5),
+    QuestionOption("That I'm responsible for my own happiness.", weight: 5),
+  ]),
 
   // Level 5
   GameQuestion(branch: QuestionBranch.deep, level: 5, text: "If you could guarantee one thing about our future, what would it be?", options: [
@@ -196,6 +244,12 @@ final List<GameQuestion> deepQuestions = [
     QuestionOption("That we stay curious about each other", weight: 4),
     QuestionOption("That we never stop choosing each other", weight: 5),
     QuestionOption("That tonight is just the beginning", weight: 5),
+  ]),
+  GameQuestion(branch: QuestionBranch.deep, level: 5, text: "What do you want to be remembered for?", options: [
+    QuestionOption("Being a good person.", weight: 3),
+    QuestionOption("Changing things.", weight: 4),
+    QuestionOption("Loving deeply.", weight: 5),
+    QuestionOption("Being unforgettable.", weight: 5),
   ]),
 ];
 

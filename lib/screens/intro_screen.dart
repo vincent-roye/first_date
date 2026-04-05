@@ -5,6 +5,7 @@ import '../main.dart';
 import 'game_screen.dart';
 
 import '../services/revenue_cat_service.dart';
+import 'dart:html' as html; // For local storage in web
 import 'paywall_screen.dart';
 import 'branch_selection_screen.dart';
 
@@ -26,10 +27,22 @@ class _IntroScreenState extends State<IntroScreen> {
   }
 
   Future<void> _checkPremium() async {
+    // Check for dev bypass flag in local storage
+    final isDev = html.window.localStorage['first_date_dev_premium'] == 'true';
+    if (isDev) {
+      setState(() { _isPremium = true; });
+      return;
+    }
+
     final premium = await RevenueCatService.isPremium();
     if (mounted) {
       setState(() { _isPremium = premium; });
     }
+  }
+
+  void _enableDevMode() {
+    html.window.localStorage['first_date_dev_premium'] = 'true';
+    setState(() { _isPremium = true; });
   }
 
   Future<void> _onStart() async {
@@ -89,7 +102,10 @@ class _IntroScreenState extends State<IntroScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Logo — minimal, not a glowing pill
-                      Text('💋', style: const TextStyle(fontSize: 36)),
+                      GestureDetector(
+                        onDoubleTap: _enableDevMode,
+                        child: Text('💋', style: const TextStyle(fontSize: 36)),
+                      ),
 
                       const SizedBox(height: AppSpacing.md),
 
