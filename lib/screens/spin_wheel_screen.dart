@@ -67,8 +67,9 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
       _isPointerActive = true;
     });
 
-    // Pre-spin haptic
+    // Pre-spin haptic - triple tap for anticipation
     HapticFeedback.mediumImpact();
+    Future.delayed(const Duration(milliseconds: 80), () => HapticFeedback.lightImpact());
     _pulseController.forward().then((_) => _pulseController.reverse());
 
     final random = math.Random();
@@ -78,15 +79,17 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
     var lastTick = 0.0;
     final totalRotation = spins * 2 * math.pi + finalAngle;
 
-    // Add a listener to the animation itself
+    // Add a listener to the animation itself - haptic ticks on each segment
     final animation = Tween<double>(begin: 0, end: totalRotation).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
     );
 
     animation.addListener(() {
       final current = animation.value;
-      if ((current - lastTick) > (2 * math.pi / 8)) {
-        HapticFeedback.lightImpact();
+      final segmentAngle = 2 * math.pi / _segments.length;
+      // Trigger haptic on each segment boundary (creates ticking effect)
+      if ((current - lastTick) > segmentAngle) {
+        HapticFeedback.selectionClick(); // Lighter tick for web compatibility
         lastTick = current;
       }
     });
@@ -106,10 +109,10 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
     final index = ((normalized + math.pi / 2) % (2 * math.pi) / segmentSize).floor();
     final result = _segments[index % 3];
 
-    // Success haptics
+    // Success haptics - graduated pattern for feedback
     HapticFeedback.heavyImpact();
-    Future.delayed(const Duration(milliseconds: 100), () => HapticFeedback.heavyImpact());
-    Future.delayed(const Duration(milliseconds: 200), () => HapticFeedback.mediumImpact());
+    Future.delayed(const Duration(milliseconds: 80), () => HapticFeedback.mediumImpact());
+    Future.delayed(const Duration(milliseconds: 160), () => HapticFeedback.lightImpact());
 
     setState(() => _isPointerActive = false);
 
@@ -160,38 +163,46 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
                     },
                   ),
                 ),
-                // Top Pointer
+                // Top Pointer with enhanced animation
                 Positioned(
                   top: -10,
                   child: AnimatedBuilder(
-                    animation: _pulseAnimation,
+                    animation: Listenable.merge([_pulseAnimation, _controller]),
                     builder: (context, child) {
+                      final isLanding = !_isSpinning && _controller.isCompleted;
+                      final basePulse = isLanding ? 1.15 : _pulseAnimation.value;
                       return Transform.scale(
-                        scale: _pulseAnimation.value,
+                        scale: basePulse,
                         child: Container(
                           width: 44,
                           height: 44,
                           decoration: BoxDecoration(
-                            color: _isPointerActive
+                            color: _isSpinning
                                 ? Colors.white
-                                : const Color(0xFF4FC3F7),
+                                : _isPointerActive
+                                    ? const Color(0xFF4FC3F7).withOpacity(0.9)
+                                    : const Color(0xFF4FC3F7),
                             shape: BoxShape.circle,
                             border: Border.all(
-                                color: Colors.white, width: 4),
+                              color: _isSpinning ? AppColors.accent : Colors.white,
+                              width: _isSpinning ? 5 : 4,
+                            ),
                             boxShadow: [
                               BoxShadow(
-                                color: _isPointerActive
-                                    ? Colors.white.withOpacity(0.6)
-                                    : Colors.black26,
-                                blurRadius: 16,
-                                spreadRadius: 4,
+                                color: _isSpinning
+                                    ? AppColors.accent.withOpacity(0.5)
+                                    : _isPointerActive
+                                        ? Colors.white.withOpacity(0.6)
+                                        : Colors.black26,
+                                blurRadius: _isSpinning ? 24 : 16,
+                                spreadRadius: _isSpinning ? 6 : 4,
                               ),
                             ],
                           ),
-                          child: const Icon(
-                            Icons.arrow_downward_rounded,
-                            color: Color(0xFF1E1E2E),
-                            size: 28,
+                          child: Icon(
+                            _isSpinning ? Icons.autorenew_rounded : Icons.arrow_downward_rounded,
+                            color: _isSpinning ? AppColors.accent : const Color(0xFF1E1E2E),
+                            size: _isSpinning ? 24 : 28,
                           ),
                         ),
                       );
