@@ -124,6 +124,7 @@ class _BranchSelectionScreenState extends State<BranchSelectionScreen>
                 description: 'Pour les connexions vraies et les moments doux.',
                 color: const Color(0xFFAB9CFF),
                 icon: '💜',
+                isLocked: false,
                 onTap: () => _selectBranch(QuestionBranch.romantic),
               ),
 
