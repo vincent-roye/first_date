@@ -4,8 +4,56 @@ import 'package:google_fonts/google_fonts.dart';
 import '../main.dart';
 import 'game_screen.dart';
 
-class IntroScreen extends StatelessWidget {
+import '../services/revenue_cat_service.dart';
+import 'paywall_screen.dart';
+import 'branch_selection_screen.dart';
+
+class IntroScreen extends StatefulWidget {
   const IntroScreen({super.key});
+
+  @override
+  State<IntroScreen> createState() => _IntroScreenState();
+}
+
+class _IntroScreenState extends State<IntroScreen> {
+  bool _isPremium = false;
+
+  @override
+  void initState() {
+    super.initState();
+    RevenueCatService.init();
+    _checkPremium();
+  }
+
+  Future<void> _checkPremium() async {
+    final premium = await RevenueCatService.isPremium();
+    if (mounted) {
+      setState(() { _isPremium = premium; });
+    }
+  }
+
+  Future<void> _onStart() async {
+    if (!_isPremium) {
+      final didUpgrade = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(builder: (_) => const PaywallScreen()),
+      );
+      if (didUpgrade == true) {
+        await _checkPremium();
+      } else {
+        // Freemium: allow limited access
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const BranchSelectionScreen()),
+        );
+      }
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const BranchSelectionScreen()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +145,7 @@ class IntroScreen extends StatelessWidget {
                 // ── CTA — bottom, large, single ──────────────────
                 Padding(
                   padding: const EdgeInsets.fromLTRB(28, 0, 28, 10),
-                  child: _StartButton(),
+                  child: _StartButton(onTap: _onStart),
                 ),
 
                 Padding(
@@ -153,6 +201,9 @@ class _Step extends StatelessWidget {
 }
 
 class _StartButton extends StatefulWidget {
+  final VoidCallback onTap;
+  const _StartButton({required this.onTap});
+
   @override
   State<_StartButton> createState() => _StartButtonState();
 }
@@ -167,15 +218,7 @@ class _StartButtonState extends State<_StartButton> {
       onTapUp: (_) {
         setState(() => _pressed = false);
         HapticFeedback.mediumImpact();
-        Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) => const GameScreen(),
-            transitionDuration: const Duration(milliseconds: 350),
-            transitionsBuilder: (_, a, __, child) =>
-                FadeTransition(opacity: a, child: child),
-          ),
-        );
+        widget.onTap();
       },
       onTapCancel: () => setState(() => _pressed = false),
       child: AnimatedScale(
