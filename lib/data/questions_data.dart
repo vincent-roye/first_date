@@ -1,5 +1,5 @@
 import '../models/question_branch.dart';
-import '../models/game_question.dart';
+import '../models/question_branch.dart';
 
 // ─── ROMANTIC BRANCH ───────────────────────────────────────────────────────
 

@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../main.dart';
 import '../models/question_branch.dart';
-import '../models/game_question.dart';
+import '../models/question_branch.dart';
 import '../data/questions_data.dart';
 import 'game_screen.dart';
 
@@ -86,8 +86,9 @@ class _BranchSelectionScreenState extends State<BranchSelectionScreen>
 
               _BranchCard(
                 branch: QuestionBranch.romantic,
-                description: 'Connection, warmth, and real moments.',
-                color: const Color(0xFF9C8FE8),
+                description: 'Pour les connexions vraies et les moments doux.',
+                color: const Color(0xFFAB9CFF),
+                icon: '💜',
                 onTap: () => _selectBranch(QuestionBranch.romantic),
               ),
 
@@ -95,8 +96,9 @@ class _BranchSelectionScreenState extends State<BranchSelectionScreen>
 
               _BranchCard(
                 branch: QuestionBranch.spicy,
-                description: 'Tension, desire, and things left unsaid.',
+                description: 'Pour les soirs où tu as pas envie de jouer.',
                 color: AppColors.accent,
+                icon: '🌶️',
                 onTap: () => _selectBranch(QuestionBranch.spicy),
               ),
 
@@ -104,8 +106,9 @@ class _BranchSelectionScreenState extends State<BranchSelectionScreen>
 
               _BranchCard(
                 branch: QuestionBranch.deep,
-                description: 'Vulnerability, honesty, and what lies beneath.',
+                description: 'Pour aller là où les autres vont pas.',
                 color: const Color(0xFF4FC3F7),
+                icon: '🔮',
                 onTap: () => _selectBranch(QuestionBranch.deep),
               ),
             ],
@@ -120,12 +123,14 @@ class _BranchCard extends StatefulWidget {
   final QuestionBranch branch;
   final String description;
   final Color color;
+  final String icon;
   final VoidCallback onTap;
 
   const _BranchCard({
     required this.branch,
     required this.description,
     required this.color,
+    required this.icon,
     required this.onTap,
   });
 
@@ -164,13 +169,13 @@ class _BranchCardState extends State<_BranchCard> {
             children: [
               Row(
                 children: [
-                  Text(widget.branch.emoji, style: const TextStyle(fontSize: 32)),
-                  const SizedBox(width: 12),
+                  Text(widget.icon, style: const TextStyle(fontSize: 36)),
+                  const SizedBox(width: 16),
                   Text(
                     widget.branch.label,
                     style: GoogleFonts.playfairDisplay(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 26,
+                      fontWeight: FontWeight.w700,
                       color: AppColors.textPrimary,
                     ),
                   ),
