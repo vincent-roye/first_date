@@ -18,7 +18,10 @@ class RevenueCatService {
   }
 
   static Future<bool> isPremium() async {
-    // For local testing on desktop, always return true to bypass paywall
+    // DEV MODE: Always return true for testing
+    return true;
+    
+    /* Production code below:
     if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
       return true;
     }
@@ -28,6 +31,7 @@ class RevenueCatService {
     } catch (e) {
       return false;
     }
+    */
   }
 
   static Future<void> purchaseOneTime() async {
