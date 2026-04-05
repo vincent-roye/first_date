@@ -4,11 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 import '../main.dart';
 import '../models/question_branch.dart';
 import '../models/game_session.dart';
+import '../services/revenue_cat_service.dart';
 import '../data/questions_data.dart';
 import '../data/actions_data.dart';
 import 'action_screen.dart';
 import 'results_screen.dart';
 import 'branch_selection_screen.dart';
+import 'paywall_screen.dart';
 
 class GameScreen extends StatefulWidget {
   final QuestionBranch? selectedBranch;
@@ -24,6 +26,7 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   late Map<int, List<GameQuestion>> _pools;
   late Map<int, int> _poolIndex;
   int _questionIndex = 0;
+  bool _isPremium = false;
 
   int _phase = 0; // 0 = Person A, 1 = Person B, 2 = direction/branch switch
   int? _selectedA;
@@ -43,6 +46,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     _fadeCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 260));
     _fade = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
     _fadeCtrl.forward();
+    _checkPremium();
+  }
+
+  Future<void> _checkPremium() async {
+    final premium = await RevenueCatService.isPremium();
+    if (mounted) {
+      setState(() { _isPremium = premium; });
+    }
   }
 
   void _loadBranch(QuestionBranch branch) {
@@ -129,7 +140,21 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     }
   }
 
-  void _onDirection(bool spicier) async {
+  Future<void> _onDirection(bool spicier) async {
+    // Check premium gate for levels 3+
+    final targetLevel = spicier ? _session.currentLevel + 1 : _session.currentLevel - 1;
+    if (spicier && targetLevel > 2 && !_isPremium) {
+      final didUpgrade = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(builder: (_) => const PaywallScreen()),
+      );
+      if (didUpgrade == true) {
+        await _checkPremium();
+      } else {
+        return; // User cancelled, don't go to higher level
+      }
+    }
+
     if (spicier) _session.goSpicier();
     else _session.goMilder();
     HapticFeedback.mediumImpact();
@@ -360,6 +385,8 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
 
   Widget _buildDirection() {
     final lvl = _session.currentLevel;
+    final nextLvlLocked = lvl >= 2 && !_isPremium;
+    
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 28),
@@ -373,19 +400,33 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                 color: AppColors.textPrimary, height: 1.0,
               )),
             const SizedBox(height: 8),
-            Text(_levelHint(lvl),
-              style: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary)),
+            nextLvlLocked
+                ? Text('Unlock Premium to explore deeper levels.',
+                    style: GoogleFonts.inter(fontSize: 14, color: AppColors.textDisabled))
+                : Text(_levelHint(lvl),
+                    style: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary)),
 
             const SizedBox(height: 48),
 
-            // Hotter — main CTA
-            _ConfirmButton(
-              label: '🌶️  Turn it up',
-              color: AppColors.accent,
-              enabled: true,
-              onTap: () => _onDirection(true),
-              height: 62,
-              fontSize: 17,
+            // Hotter — main CTA (locked if not premium)
+            GestureDetector(
+              onTap: nextLvlLocked
+                  ? () async {
+                      final didUpgrade = await Navigator.push<bool>(
+                        context,
+                        MaterialPageRoute(builder: (_) => const PaywallScreen()),
+                      );
+                      if (didUpgrade == true) await _checkPremium();
+                    }
+                  : () => _onDirection(true),
+              child: _ConfirmButton(
+                label: nextLvlLocked ? '🔒 Unlock Premium' : '🌶️  Turn it up',
+                color: nextLvlLocked ? AppColors.textDisabled : AppColors.accent,
+                enabled: true,
+                onTap: null, // Handled by GestureDetector above
+                height: 62,
+                fontSize: 17,
+              ),
             ),
 
             const SizedBox(height: 12),
