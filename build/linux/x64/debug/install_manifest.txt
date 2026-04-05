@@ -1,0 +1,13 @@
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/first_date
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/data/icudtl.dat
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/lib/libflutter_linux_gtk.so
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/data/flutter_assets/NativeAssetsManifest.json
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/data/flutter_assets/fonts/MaterialIcons-Regular.otf
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/data/flutter_assets/AssetManifest.bin
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/data/flutter_assets/version.json
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/data/flutter_assets/assets/icon.png
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/data/flutter_assets/shaders/ink_sparkle.frag
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/data/flutter_assets/shaders/stretch_effect.frag
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/data/flutter_assets/kernel_blob.bin
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/data/flutter_assets/NOTICES.Z
+/home/vincent/first_date_build/build/linux/x64/debug/bundle/data/flutter_assets/FontManifest.json
