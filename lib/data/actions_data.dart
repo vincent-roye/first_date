@@ -1,55 +1,49 @@
 import '../models/game_action.dart';
 
-/// Actions are purely between the two people.
-/// Level 1-2: soft, conversational
-/// Level 3: intimate
-/// Level 4-5: bold
+/// Progressive actions that build intensity
+class ActionLibrary {
+  /// Get a progressive sequence of actions for a given level
+  static List<GameAction> getActionsForLevel(int level) {
+    switch (level) {
+      case 1:
+        return [
+          GameAction(text: "Look them in the eyes for 5 seconds without saying anything", level: 1, intensity: ActionIntensity.soft),
+          GameAction(text: "Tell them the first thing you noticed about them tonight", level: 1, intensity: ActionIntensity.soft),
+          GameAction(text: "Give them one compliment — the one you've been holding back", level: 1, intensity: ActionIntensity.soft),
+        ];
+      case 2:
+        return [
+          GameAction(text: "Move your chair a little closer — without explanation", level: 2, intensity: ActionIntensity.soft),
+          GameAction(text: "Tell them something you find attractive about them right now", level: 2, intensity: ActionIntensity.intimate),
+          GameAction(text: "Touch their hand for a moment while you're talking", level: 2, intensity: ActionIntensity.intimate, isProgressive: true),
+        ];
+      case 3:
+        return [
+          GameAction(text: "Take their hand. Hold it. Don't let go for 10 seconds.", level: 3, intensity: ActionIntensity.intimate, isProgressive: true),
+          GameAction(text: "Whisper something in their ear — something you wouldn't say out loud", level: 3, intensity: ActionIntensity.intimate),
+          GameAction(text: "Put your hand on their arm. Feel the warmth.", level: 3, intensity: ActionIntensity.intimate, isProgressive: true),
+        ];
+      case 4:
+        return [
+          GameAction(text: "Move close enough that you're almost touching and stay there", level: 4, intensity: ActionIntensity.bold, isProgressive: true),
+          GameAction(text: "Tell them you'd like to kiss them — and see what happens", level: 4, intensity: ActionIntensity.bold),
+          GameAction(text: "Put your hand on their cheek. Look at their lips.", level: 4, intensity: ActionIntensity.bold, isProgressive: true),
+        ];
+      case 5:
+        return [
+          GameAction(text: "Close the distance. Kiss them.", level: 5, intensity: ActionIntensity.bold, isProgressive: true),
+          GameAction(text: "Whisper what you want to happen next.", level: 5, intensity: ActionIntensity.bold),
+          GameAction(text: "Stop talking. You both know what this is.", level: 5, intensity: ActionIntensity.bold),
+        ];
+      default:
+        return [];
+    }
+  }
 
-GameAction getActionForScore(int score) {
-  final pool = _actionsForScore(score);
-  pool.shuffle();
-  return pool.first;
+  /// Get a random action for the current score/level
+  static GameAction getRandomAction(int level) {
+    final actions = getActionsForLevel(level);
+    actions.shuffle();
+    return actions.first;
+  }
 }
-
-List<GameAction> _actionsForScore(int score) {
-  if (score >= 25) return _level5.map((t) => GameAction(t, 5)).toList();
-  if (score >= 18) return _level4.map((t) => GameAction(t, 4)).toList();
-  if (score >= 12) return _level3.map((t) => GameAction(t, 3)).toList();
-  if (score >= 6)  return _level2.map((t) => GameAction(t, 2)).toList();
-  return _level1.map((t) => GameAction(t, 1)).toList();
-}
-
-const _level1 = [
-  "Look them in the eyes for 5 seconds without saying anything",
-  "Tell them the first thing you noticed about them tonight",
-  "Give them one compliment — the one you've been holding back",
-  "Tell them one true thing about yourself that you usually save for later",
-];
-
-const _level2 = [
-  "Move your chair a little closer — without explanation",
-  "Tell them something you find attractive about them right now",
-  "Touch their hand for a moment while you're talking",
-  "Look at them like you're figuring something out",
-];
-
-const _level3 = [
-  "Tell them what you've been thinking about doing since the beginning of the night",
-  "Put your hand on theirs and hold it for 10 seconds",
-  "Whisper something in their ear — something you wouldn't say out loud",
-  "Look at them for 10 seconds. No talking. Just that.",
-];
-
-const _level4 = [
-  "Tell them you'd like to kiss them — and see what happens",
-  "Move close enough that you're almost touching and stay there",
-  "Tell them exactly what you want right now",
-  "Do something you've been wanting to do all night",
-];
-
-const _level5 = [
-  "Kiss them",
-  "Tell them what comes next — then make it happen",
-  "Close the distance. You've both been waiting.",
-  "Stop talking. You both know what this is.",
-];

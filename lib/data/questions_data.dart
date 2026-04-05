@@ -1,224 +1,213 @@
+import '../models/question_branch.dart';
 import '../models/game_question.dart';
 
-/// Intensity levels 1-5
-/// 1-2 = connection/getting to know (the natural path toward hot)
-/// 3   = personal/intimate
-/// 4   = hot
-/// 5   = very hot
+// ─── ROMANTIC BRANCH ───────────────────────────────────────────────────────
 
-final List<GameQuestion> allQuestions = [
-
-  // ─── LEVEL 1 — Connection starters ───────────────────────────────────────
-  GameQuestion(1, "What made you want to come tonight?", [
+final List<GameQuestion> romanticQuestions = [
+  // Level 1
+  GameQuestion(branch: QuestionBranch.romantic, level: 1, text: "What made you want to come tonight?", options: [
     QuestionOption("Curiosity about you", weight: 1),
     QuestionOption("I needed a good night out", weight: 1),
     QuestionOption("Something about you caught my attention", weight: 2),
     QuestionOption("Honestly? Instinct", weight: 2),
   ]),
-  GameQuestion(1, "What's the first thing you noticed about me?", [
-    QuestionOption("Your energy when you walked in", weight: 2),
-    QuestionOption("Something physical", weight: 3),
-    QuestionOption("The way you smiled", weight: 2),
+  GameQuestion(branch: QuestionBranch.romantic, level: 1, text: "What's your idea of a perfect evening together?", options: [
+    QuestionOption("Quiet night in, just talking", weight: 1),
+    QuestionOption("Exploring somewhere new", weight: 2),
+    QuestionOption("Something spontaneous", weight: 2),
+    QuestionOption("Just being around you", weight: 3),
+  ]),
+  // Mirror question
+  GameQuestion(branch: QuestionBranch.romantic, level: 1, text: "What do you think I noticed first about you?", type: QuestionType.mirror, options: [
+    QuestionOption("My eyes", weight: 1),
+    QuestionOption("My smile", weight: 2),
+    QuestionOption("My energy", weight: 2),
+    QuestionOption("Something unexpected", weight: 3),
+  ]),
+
+  // Level 2
+  GameQuestion(branch: QuestionBranch.romantic, level: 2, text: "When do you feel most connected to someone?", options: [
+    QuestionOption("When we're laughing at the same thing", weight: 2),
+    QuestionOption("When we're comfortable in silence", weight: 2),
+    QuestionOption("When we share something vulnerable", weight: 3),
+    QuestionOption("When there's physical touch", weight: 3),
+  ]),
+  GameQuestion(branch: QuestionBranch.romantic, level: 2, text: "What's something small I do that you like?", options: [
+    QuestionOption("The way you listen", weight: 2),
+    QuestionOption("Your laugh", weight: 2),
+    QuestionOption("How you look at me", weight: 3),
     QuestionOption("I'll tell you later", weight: 3),
   ]),
-  GameQuestion(1, "What kind of night were you hoping for?", [
-    QuestionOption("Good conversation", weight: 1),
-    QuestionOption("Something unexpected", weight: 2),
-    QuestionOption("A connection — real one", weight: 2),
-    QuestionOption("Whatever happens, happens", weight: 3),
+
+  // Level 3
+  GameQuestion(branch: QuestionBranch.romantic, level: 3, text: "What's a memory of us that you love?", options: [
+    QuestionOption("Our first conversation", weight: 2),
+    QuestionOption("That time we got lost together", weight: 3),
+    QuestionOption("A quiet moment nobody saw", weight: 3),
+    QuestionOption("Tonight, so far", weight: 4),
   ]),
-  GameQuestion(1, "What's something most people don't know about you right away?", [
-    QuestionOption("How intense I can be", weight: 2),
-    QuestionOption("How much I observe people", weight: 1),
-    QuestionOption("That I take time to open up", weight: 1),
-    QuestionOption("How much I want when I want something", weight: 3),
-  ]),
-  GameQuestion(1, "What do you think makes a first date actually good?", [
-    QuestionOption("Real conversation, no small talk", weight: 1),
-    QuestionOption("Tension — the good kind", weight: 3),
-    QuestionOption("When you forget what time it is", weight: 2),
-    QuestionOption("Feeling like yourself and more at the same time", weight: 2),
-  ]),
-  GameQuestion(1, "How do you know when you're actually attracted to someone?", [
-    QuestionOption("I pay attention to everything they do", weight: 2),
-    QuestionOption("I want to be near them without a reason", weight: 2),
-    QuestionOption("My body responds before my brain does", weight: 3),
-    QuestionOption("I start thinking about them when they're not around", weight: 2),
-  ]),
-  GameQuestion(1, "What's something small that says a lot about a person?", [
-    QuestionOption("How they treat people they don't need to impress", weight: 1),
-    QuestionOption("The way they use their hands when they talk", weight: 2),
-    QuestionOption("Eye contact — or lack of it", weight: 2),
-    QuestionOption("What they laugh at", weight: 1),
-  ]),
-  GameQuestion(1, "What's the best compliment someone could give you right now?", [
-    QuestionOption("That I'm magnetic without trying", weight: 2),
-    QuestionOption("That I make people feel seen", weight: 1),
-    QuestionOption("That I'm exactly the kind of person they didn't expect", weight: 2),
-    QuestionOption("That I'm hard to forget", weight: 3),
+  // Action-first question
+  GameQuestion(branch: QuestionBranch.romantic, level: 3, text: "Take their hand. Now: what does this touch make you feel?", type: QuestionType.actionFirst, instruction: "Take their hand and hold it for 10 seconds.", options: [
+    QuestionOption("Safe", weight: 2),
+    QuestionOption("Excited", weight: 3),
+    QuestionOption("Like I never want to let go", weight: 4),
+    QuestionOption("Everything", weight: 4),
   ]),
 
-  // ─── LEVEL 2 — Getting warmer ─────────────────────────────────────────────
-  GameQuestion(2, "What's the most attractive thing someone can do in a conversation?", [
-    QuestionOption("Look at me like what I say matters", weight: 2),
-    QuestionOption("Say something I didn't expect", weight: 2),
-    QuestionOption("Make me feel the tension without saying anything", weight: 3),
-    QuestionOption("Be honest about something most people wouldn't admit", weight: 2),
-  ]),
-  GameQuestion(2, "What do you find irresistible about someone?", [
-    QuestionOption("Confidence that isn't loud", weight: 2),
-    QuestionOption("The way they move", weight: 3),
-    QuestionOption("When they make me feel like the only person in the room", weight: 2),
-    QuestionOption("A voice that does something to me", weight: 3),
-  ]),
-  GameQuestion(2, "What's something you notice about someone before anything else?", [
-    QuestionOption("Their mouth", weight: 3),
-    QuestionOption("Their hands", weight: 2),
-    QuestionOption("Their eyes", weight: 2),
-    QuestionOption("The way they hold themselves", weight: 2),
-  ]),
-  GameQuestion(2, "How do you show someone you're interested without saying it?", [
-    QuestionOption("I find reasons to be close", weight: 3),
-    QuestionOption("I pay attention to details they mention", weight: 1),
-    QuestionOption("I mirror them without thinking", weight: 2),
-    QuestionOption("I hold eye contact a second too long", weight: 3),
-  ]),
-  GameQuestion(2, "What's something about tonight that's already working?", [
-    QuestionOption("The conversation — it's real", weight: 2),
-    QuestionOption("The energy between us", weight: 3),
-    QuestionOption("That I'm not thinking about being anywhere else", weight: 2),
-    QuestionOption("Something I'm not saying out loud yet", weight: 3),
-  ]),
-  GameQuestion(2, "What kind of energy do you bring when you really like someone?", [
-    QuestionOption("Calm outside, burning inside", weight: 3),
-    QuestionOption("I get very present — all attention on them", weight: 2),
-    QuestionOption("Playful, a little dangerous", weight: 3),
-    QuestionOption("Warm, like I want to pull them in", weight: 2),
-  ]),
-  GameQuestion(2, "What would make you lean in right now?", [
-    QuestionOption("If they said something that surprised me", weight: 2),
-    QuestionOption("If they moved closer", weight: 3),
-    QuestionOption("If they looked at me the right way", weight: 3),
-    QuestionOption("If the conversation went somewhere real", weight: 2),
-  ]),
-  GameQuestion(2, "What's your love language — and do you think I've hit it yet?", [
-    QuestionOption("Touch. And you're getting closer.", weight: 4),
-    QuestionOption("Words. You're saying the right things.", weight: 2),
-    QuestionOption("Presence. You've had mine all night.", weight: 2),
-    QuestionOption("Ask me again at the end of the night.", weight: 3),
+  // Level 4
+  GameQuestion(branch: QuestionBranch.romantic, level: 4, text: "What's something you want us to do together soon?", options: [
+    QuestionOption("A weekend trip", weight: 3),
+    QuestionOption("Just more nights like this", weight: 3),
+    QuestionOption("Something we've never done before", weight: 4),
+    QuestionOption("Wake up next to each other", weight: 5),
   ]),
 
-  // ─── LEVEL 3 — Personal & intimate ───────────────────────────────────────
-  GameQuestion(3, "What's something small that turns you on instantly?", [
-    QuestionOption("Eye contact that lasts too long", weight: 3),
-    QuestionOption("A confident touch — casual but intentional", weight: 4),
-    QuestionOption("A voice that drops just slightly", weight: 3),
-    QuestionOption("When someone smells right", weight: 3),
-  ]),
-  GameQuestion(3, "What's the difference between attraction and chemistry to you?", [
-    QuestionOption("Attraction is physical. Chemistry is when I can't stop thinking about them.", weight: 3),
-    QuestionOption("When both are there at the same time, I stop being careful.", weight: 4),
-    QuestionOption("Chemistry is attraction that makes me forget myself a little.", weight: 3),
-    QuestionOption("I don't separate them — when it's real, it's both.", weight: 3),
-  ]),
-  GameQuestion(3, "What kind of touch do you like most?", [
-    QuestionOption("Slow and deliberate", weight: 4),
-    QuestionOption("Something that starts innocent and isn't", weight: 5),
-    QuestionOption("When it's unexpected and right", weight: 4),
-    QuestionOption("When it says more than words would", weight: 3),
-  ]),
-  GameQuestion(3, "What's something you want right now that you haven't said out loud?", [
-    QuestionOption("To know what they're actually thinking", weight: 3),
-    QuestionOption("For this tension to go somewhere", weight: 4),
-    QuestionOption("To be closer than we are", weight: 4),
-    QuestionOption("For the night not to end yet", weight: 3),
-  ]),
-  GameQuestion(3, "What does intimacy mean to you?", [
-    QuestionOption("Feeling wanted, not just desired", weight: 3),
-    QuestionOption("Being close enough that nothing else matters", weight: 4),
-    QuestionOption("The moment just before — and the one just after", weight: 4),
-    QuestionOption("When I stop performing and just feel", weight: 3),
-  ]),
-  GameQuestion(3, "What's the boldest move someone's ever made on you?", [
-    QuestionOption("They told me directly what they wanted", weight: 4),
-    QuestionOption("They touched me before asking", weight: 5),
-    QuestionOption("They closed the distance without warning", weight: 4),
-    QuestionOption("They said something that made it impossible to pretend", weight: 3),
-  ]),
-  GameQuestion(3, "When do you feel most desirable?", [
-    QuestionOption("When someone can't stop looking", weight: 3),
-    QuestionOption("When I can feel the tension and I know I'm causing it", weight: 4),
-    QuestionOption("When someone forgets what they were saying", weight: 4),
-    QuestionOption("When I'm wanted in a way that's hard to hide", weight: 4),
-  ]),
-  GameQuestion(3, "What do you want someone to notice about you that they haven't yet?", [
-    QuestionOption("How much I'm holding back", weight: 4),
-    QuestionOption("That I want this more than I'm showing", weight: 4),
-    QuestionOption("What I look like when I stop being careful", weight: 5),
-    QuestionOption("That I'm thinking about them more than I should be", weight: 4),
-  ]),
-
-  // ─── LEVEL 4 — Hot ───────────────────────────────────────────────────────
-  GameQuestion(4, "What's something you'd want to happen after tonight?", [
-    QuestionOption("To see where this goes", weight: 4),
-    QuestionOption("For this not to be the last time", weight: 4),
-    QuestionOption("Something I'd rather show than say", weight: 5),
-    QuestionOption("More of this — whatever this is", weight: 4),
-  ]),
-  GameQuestion(4, "What's the thing about me tonight that made you the most…?", [
-    QuestionOption("Curious", weight: 3),
-    QuestionOption("Attracted", weight: 4),
-    QuestionOption("Wanting to get closer", weight: 5),
-    QuestionOption("Something I'm keeping to myself", weight: 4),
-  ]),
-  GameQuestion(4, "If you could say one thing to me right now without consequence, what would it be?", [
-    QuestionOption("That I've been thinking about kissing you", weight: 5),
-    QuestionOption("That tonight is going exactly where I wanted", weight: 4),
-    QuestionOption("What I want to do next", weight: 5),
-    QuestionOption("Something honest that I'd never usually say this early", weight: 4),
-  ]),
-  GameQuestion(4, "What's your idea of a perfect ending to tonight?", [
-    QuestionOption("Not ending it yet", weight: 4),
-    QuestionOption("Something I'll think about tomorrow", weight: 5),
-    QuestionOption("A moment we don't need to explain", weight: 5),
-    QuestionOption("Whatever feels right — and I have a feeling about what that is", weight: 5),
-  ]),
-  GameQuestion(4, "What's something you find attractive that you wouldn't usually admit?", [
-    QuestionOption("When someone takes what they want, gently", weight: 5),
-    QuestionOption("Being wanted so much it's hard to hide", weight: 4),
-    QuestionOption("A certain kind of tension right before something happens", weight: 5),
-    QuestionOption("Being looked at like I'm the only person in the room", weight: 4),
-  ]),
-  GameQuestion(4, "What's the most honest thing you could say about how you feel right now?", [
-    QuestionOption("More interested than I expected", weight: 4),
-    QuestionOption("Like I want this to go further", weight: 5),
-    QuestionOption("Attracted in a way that's getting harder to ignore", weight: 5),
-    QuestionOption("Like tonight might be something I remember", weight: 4),
-  ]),
-
-  // ─── LEVEL 5 — Very hot ──────────────────────────────────────────────────
-  GameQuestion(5, "What would you want me to do right now if nothing was off limits?", [
-    QuestionOption("Stay exactly this close", weight: 4),
-    QuestionOption("Close the distance", weight: 5),
-    QuestionOption("Something I'm not going to say out loud", weight: 5),
-    QuestionOption("Kiss me", weight: 5),
-  ]),
-  GameQuestion(5, "What's the thing you want most that you haven't asked for yet tonight?", [
-    QuestionOption("To feel you closer", weight: 5),
-    QuestionOption("A kiss. Just one — and see what happens.", weight: 5),
-    QuestionOption("For you to stop waiting", weight: 5),
-    QuestionOption("The same thing you want", weight: 5),
-  ]),
-  GameQuestion(5, "What would it take for you to make a move right now?", [
-    QuestionOption("You already have", weight: 5),
-    QuestionOption("Nothing. I'm about to.", weight: 5),
-    QuestionOption("Eye contact. Real eye contact.", weight: 4),
-    QuestionOption("For you to want it as much as I do", weight: 5),
-  ]),
-  GameQuestion(5, "If this night could end any way you wanted, what happens next?", [
-    QuestionOption("We stay until they close this place", weight: 3),
-    QuestionOption("We find somewhere quieter", weight: 5),
-    QuestionOption("You already know the answer", weight: 5),
-    QuestionOption("Something that starts with a kiss and doesn't end there", weight: 5),
+  // Level 5
+  GameQuestion(branch: QuestionBranch.romantic, level: 5, text: "What's the most romantic thing you can imagine us doing?", options: [
+    QuestionOption("Dancing in the kitchen", weight: 3),
+    QuestionOption("Watching the sunrise together", weight: 4),
+    QuestionOption("Getting lost in a city we don't know", weight: 4),
+    QuestionOption("Whatever we're doing right now, forever", weight: 5),
   ]),
 ];
+
+// ─── SPICY BRANCH ──────────────────────────────────────────────────────────
+
+final List<GameQuestion> spicyQuestions = [
+  // Level 1
+  GameQuestion(branch: QuestionBranch.spicy, level: 1, text: "What's the first thing you noticed about me physically?", options: [
+    QuestionOption("Your eyes", weight: 2),
+    QuestionOption("Your smile", weight: 2),
+    QuestionOption("Your body", weight: 3),
+    QuestionOption("The way you move", weight: 3),
+  ]),
+  GameQuestion(branch: QuestionBranch.spicy, level: 1, text: "What kind of outfit drives you crazy?", options: [
+    QuestionOption("Something simple but fitted", weight: 2),
+    QuestionOption("Something that shows confidence", weight: 3),
+    QuestionOption("Less is more", weight: 4),
+    QuestionOption("I'll show you later", weight: 4),
+  ]),
+
+  // Level 2
+  GameQuestion(branch: QuestionBranch.spicy, level: 2, text: "What's your favorite place to be kissed?", options: [
+    QuestionOption("The neck", weight: 3),
+    QuestionOption("The lips, obviously", weight: 2),
+    QuestionOption("Somewhere unexpected", weight: 4),
+    QuestionOption("I'll let you guess", weight: 4),
+  ]),
+  // Mirror question
+  GameQuestion(branch: QuestionBranch.spicy, level: 2, text: "What do you think I'm imagining right now?", type: QuestionType.mirror, options: [
+    QuestionOption("Something innocent", weight: 2),
+    QuestionOption("Kissing me", weight: 4),
+    QuestionOption("Something we shouldn't say out loud", weight: 5),
+    QuestionOption("The same thing I am", weight: 4),
+  ]),
+
+  // Level 3
+  GameQuestion(branch: QuestionBranch.spicy, level: 3, text: "What's something you've wanted to do to me since we met?", options: [
+    QuestionOption("Kiss you", weight: 4),
+    QuestionOption("Touch you", weight: 4),
+    QuestionOption("Something I can't say here", weight: 5),
+    QuestionOption("Everything", weight: 5),
+  ]),
+  // Silent question
+  GameQuestion(branch: QuestionBranch.spicy, level: 3, text: "Look at their lips. Don't say anything for 10 seconds.", type: QuestionType.silent, instruction: "Look at their lips. Don't say anything for 10 seconds.", options: [
+    QuestionOption("I'm thinking about kissing them", weight: 4),
+    QuestionOption("I'm wondering what they taste like", weight: 5),
+    QuestionOption("I'm waiting for them to make the first move", weight: 4),
+    QuestionOption("I'm already imagining it", weight: 5),
+  ]),
+
+  // Level 4
+  GameQuestion(branch: QuestionBranch.spicy, level: 4, text: "What's your biggest turn-on?", options: [
+    QuestionOption("Confidence", weight: 3),
+    QuestionOption("Touch", weight: 4),
+    QuestionOption("Being wanted", weight: 5),
+    QuestionOption("You", weight: 5),
+  ]),
+
+  // Level 5
+  GameQuestion(branch: QuestionBranch.spicy, level: 5, text: "If we were alone right now, what would you do?", options: [
+    QuestionOption("Kiss you immediately", weight: 5),
+    QuestionOption("Take my time", weight: 5),
+    QuestionOption("Let you take control", weight: 5),
+    QuestionOption("I already have a plan", weight: 5),
+  ]),
+];
+
+// ─── DEEP BRANCH ───────────────────────────────────────────────────────────
+
+final List<GameQuestion> deepQuestions = [
+  // Level 1
+  GameQuestion(branch: QuestionBranch.deep, level: 1, text: "What's something most people don't know about you?", options: [
+    QuestionOption("I'm more sensitive than I look", weight: 2),
+    QuestionOption("I think about the future more than the present", weight: 2),
+    QuestionOption("I'm afraid of being vulnerable", weight: 3),
+    QuestionOption("I want more than I let on", weight: 3),
+  ]),
+  GameQuestion(branch: QuestionBranch.deep, level: 1, text: "What's the best compliment you've ever received?", options: [
+    QuestionOption("That I'm kind", weight: 1),
+    QuestionOption("That I'm intense", weight: 2),
+    QuestionOption("That I make people feel seen", weight: 3),
+    QuestionOption("That I'm unforgettable", weight: 3),
+  ]),
+
+  // Level 2
+  GameQuestion(branch: QuestionBranch.deep, level: 2, text: "What's something you're afraid to want?", options: [
+    QuestionOption("To be truly known", weight: 3),
+    QuestionOption("To want someone this much", weight: 4),
+    QuestionOption("To be happy", weight: 3),
+    QuestionOption("To ask for what I really need", weight: 4),
+  ]),
+  // Mirror question
+  GameQuestion(branch: QuestionBranch.deep, level: 2, text: "What do you think is my biggest fear?", type: QuestionType.mirror, options: [
+    QuestionOption("Being alone", weight: 2),
+    QuestionOption("Not being enough", weight: 3),
+    QuestionOption("Getting hurt", weight: 3),
+    QuestionOption("Never finding what we have right now", weight: 4),
+  ]),
+
+  // Level 3
+  GameQuestion(branch: QuestionBranch.deep, level: 3, text: "What does love mean to you?", options: [
+    QuestionOption("Being there, always", weight: 2),
+    QuestionOption("Choosing each other every day", weight: 3),
+    QuestionOption("Feeling safe enough to be real", weight: 4),
+    QuestionOption("Everything we're building right now", weight: 4),
+  ]),
+  // Action-first
+  GameQuestion(branch: QuestionBranch.deep, level: 3, text: "Look into their eyes. Say one thing you appreciate about them.", type: QuestionType.actionFirst, instruction: "Look into their eyes. Say one thing you appreciate about them.", options: [
+    QuestionOption("Their honesty", weight: 2),
+    QuestionOption("Their presence", weight: 3),
+    QuestionOption("How they make me feel", weight: 4),
+    QuestionOption("Everything", weight: 4),
+  ]),
+
+  // Level 4
+  GameQuestion(branch: QuestionBranch.deep, level: 4, text: "What's something you've never told anyone?", options: [
+    QuestionOption("A secret I keep", weight: 3),
+    QuestionOption("A regret", weight: 4),
+    QuestionOption("A dream I'm afraid to say out loud", weight: 4),
+    QuestionOption("How much this means to me", weight: 5),
+  ]),
+
+  // Level 5
+  GameQuestion(branch: QuestionBranch.deep, level: 5, text: "If you could guarantee one thing about our future, what would it be?", options: [
+    QuestionOption("That we keep talking like this", weight: 4),
+    QuestionOption("That we stay curious about each other", weight: 4),
+    QuestionOption("That we never stop choosing each other", weight: 5),
+    QuestionOption("That tonight is just the beginning", weight: 5),
+  ]),
+];
+
+// ─── COMBINED LIST (for easy access) ───────────────────────────────────────
+
+List<GameQuestion> getQuestionsForBranch(QuestionBranch branch) {
+  switch (branch) {
+    case QuestionBranch.romantic:
+      return romanticQuestions;
+    case QuestionBranch.spicy:
+      return spicyQuestions;
+    case QuestionBranch.deep:
+      return deepQuestions;
+  }
+}

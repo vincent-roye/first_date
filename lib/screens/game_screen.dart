@@ -2,15 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../main.dart';
+import '../models/question_branch.dart';
 import '../models/game_question.dart';
 import '../models/game_session.dart';
 import '../data/questions_data.dart';
 import '../data/actions_data.dart';
 import 'action_screen.dart';
 import 'results_screen.dart';
+import 'branch_selection_screen.dart';
 
 class GameScreen extends StatefulWidget {
-  const GameScreen({super.key});
+  final QuestionBranch? selectedBranch;
+  const GameScreen({super.key, this.selectedBranch});
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -18,11 +21,12 @@ class GameScreen extends StatefulWidget {
 
 class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   final GameSession _session = GameSession();
+  late QuestionBranch _currentBranch;
   late Map<int, List<GameQuestion>> _pools;
   late Map<int, int> _poolIndex;
   int _questionIndex = 0;
 
-  int _phase = 0; // 0 = Person A, 1 = Person B, 2 = direction
+  int _phase = 0; // 0 = Person A, 1 = Person B, 2 = direction/branch switch
   int? _selectedA;
   int? _selectedB;
   GameQuestion? _currentQuestion;
@@ -33,16 +37,23 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _pools = {};
-    _poolIndex = {};
-    for (int lvl = 1; lvl <= 5; lvl++) {
-      _pools[lvl] = allQuestions.where((q) => q.level == lvl).toList()..shuffle();
-      _poolIndex[lvl] = 0;
-    }
+    _currentBranch = widget.selectedBranch ?? QuestionBranch.romantic;
+    _session.currentBranch = _currentBranch;
+    _loadBranch(_currentBranch);
     _currentQuestion = _nextQuestion();
     _fadeCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 260));
     _fade = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
     _fadeCtrl.forward();
+  }
+
+  void _loadBranch(QuestionBranch branch) {
+    final questions = getQuestionsForBranch(branch);
+    _pools = {};
+    _poolIndex = {};
+    for (int lvl = 1; lvl <= 5; lvl++) {
+      _pools[lvl] = questions.where((q) => q.level == lvl).toList()..shuffle();
+      _poolIndex[lvl] = 0;
+    }
   }
 
   @override
@@ -88,11 +99,12 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       final q = _currentQuestion!;
       _session.addQuestionScore(
         q.options[_selectedA!].weight + q.options[_selectedB!].weight,
+        q.branch,
       );
       _questionIndex++;
 
       if (_session.shouldTriggerAction) {
-        final action = getActionForScore(_session.spiceScore);
+        final action = ActionLibrary.getRandomAction(_session.currentLevel);
         await _fadeCtrl.reverse();
         if (!mounted) return;
         final result = await Navigator.push<bool>(
@@ -127,6 +139,17 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
       _currentQuestion = _nextQuestion();
       _selectedA = null; _selectedB = null; _phase = 0;
     });
+  }
+
+  void _onChangeBranch() {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => const BranchSelectionScreen(),
+        transitionDuration: const Duration(milliseconds: 350),
+        transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
+      ),
+    );
   }
 
   void _goToResults() {
@@ -164,6 +187,14 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
     final selected = isA ? _selectedA : _selectedB;
     final canConfirm = selected != null;
     final qAccent = _accentForLevel(q.level);
+    final isMirror = q.type == QuestionType.mirror;
+    final isActionFirst = q.type == QuestionType.actionFirst;
+    final isSilent = q.type == QuestionType.silent;
+
+    String questionText = q.text;
+    if (isMirror) questionText = "What do you think ${isA ? 'Person B' : 'Person A'} will answer?";
+    if (isActionFirst) questionText = q.instruction ?? q.text;
+    if (isSilent) questionText = q.instruction ?? q.text;
 
     return SafeArea(
       child: Column(
@@ -374,6 +405,27 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                     style: GoogleFonts.inter(
                       fontSize: 15, color: AppColors.textDisabled,
                       fontWeight: FontWeight.w400,
+                    )),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            // Change vibe
+            GestureDetector(
+              onTap: _onChangeBranch,
+              child: Container(
+                width: double.infinity, height: 52,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppRadius.button),
+                  border: Border.all(color: AppColors.borderSubtle),
+                ),
+                child: Center(
+                  child: Text('Change vibe →',
+                    style: GoogleFonts.inter(
+                      fontSize: 15, color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
                     )),
                 ),
               ),
