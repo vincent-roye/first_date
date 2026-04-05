@@ -2,7 +2,7 @@ import 'dart:io' show Platform;
 import 'package:purchases_flutter/purchases_flutter.dart';
 
 class RevenueCatService {
-  static const String _apiKey = "YOUR_REVENUECAT_API_KEY";
+  static const String _apiKey = "sk_qWHGnzZHsXXVttQPHwokdIAUSAwhl";
   static const String _entitlementId = "premium";
   
   static const String _productIdOneTime = "first_date_lifetime";

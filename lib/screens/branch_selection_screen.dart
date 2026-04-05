@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../main.dart';
 import '../models/question_branch.dart';
-import '../models/question_branch.dart';
-import '../data/questions_data.dart';
+import '../services/revenue_cat_service.dart';
+import 'paywall_screen.dart';
 import 'game_screen.dart';
 
 class BranchSelectionScreen extends StatefulWidget {
@@ -18,6 +18,7 @@ class _BranchSelectionScreenState extends State<BranchSelectionScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _fadeCtrl;
   late Animation<double> _fade;
+  bool _isPremium = false;
 
   @override
   void initState() {
@@ -25,6 +26,14 @@ class _BranchSelectionScreenState extends State<BranchSelectionScreen>
     _fadeCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
     _fade = CurvedAnimation(parent: _fadeCtrl, curve: Curves.easeOut);
     _fadeCtrl.forward();
+    _checkPremium();
+  }
+
+  Future<void> _checkPremium() async {
+    final premium = await RevenueCatService.isPremium();
+    if (mounted) {
+      setState(() { _isPremium = premium; });
+    }
   }
 
   @override
@@ -33,7 +42,33 @@ class _BranchSelectionScreenState extends State<BranchSelectionScreen>
     super.dispose();
   }
 
-  void _selectBranch(QuestionBranch branch) {
+  Future<void> _selectBranch(QuestionBranch branch) async {
+    // Romantic is always free
+    if (branch == QuestionBranch.romantic) {
+      HapticFeedback.mediumImpact();
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => GameScreen(selectedBranch: branch),
+          transitionDuration: const Duration(milliseconds: 350),
+          transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
+        ),
+      );
+      return;
+    }
+
+    if (!_isPremium) {
+      final didUpgrade = await Navigator.push<bool>(
+        context,
+        MaterialPageRoute(builder: (_) => const PaywallScreen()),
+      );
+      if (didUpgrade == true) {
+        await _checkPremium();
+        _selectBranch(branch); // Retry after upgrade
+      }
+      return;
+    }
+
     HapticFeedback.mediumImpact();
     Navigator.pushReplacement(
       context,
@@ -99,6 +134,7 @@ class _BranchSelectionScreenState extends State<BranchSelectionScreen>
                 description: 'Pour les soirs où tu as pas envie de jouer.',
                 color: AppColors.accent,
                 icon: '🌶️',
+                isLocked: !_isPremium,
                 onTap: () => _selectBranch(QuestionBranch.spicy),
               ),
 
@@ -109,6 +145,7 @@ class _BranchSelectionScreenState extends State<BranchSelectionScreen>
                 description: 'Pour aller là où les autres vont pas.',
                 color: const Color(0xFF4FC3F7),
                 icon: '🔮',
+                isLocked: !_isPremium,
                 onTap: () => _selectBranch(QuestionBranch.deep),
               ),
             ],
@@ -124,6 +161,7 @@ class _BranchCard extends StatefulWidget {
   final String description;
   final Color color;
   final String icon;
+  final bool isLocked;
   final VoidCallback onTap;
 
   const _BranchCard({
@@ -131,6 +169,7 @@ class _BranchCard extends StatefulWidget {
     required this.description,
     required this.color,
     required this.icon,
+    required this.isLocked,
     required this.onTap,
   });
 
@@ -144,12 +183,7 @@ class _BranchCardState extends State<_BranchCard> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) {
-        setState(() => _pressed = false);
-        widget.onTap();
-      },
-      onTapCancel: () => setState(() => _pressed = false),
+      onTap: widget.onTap,
       child: AnimatedScale(
         scale: _pressed ? 0.97 : 1.0,
         duration: const Duration(milliseconds: 100),
@@ -157,38 +191,50 @@ class _BranchCardState extends State<_BranchCard> {
           margin: const EdgeInsets.symmetric(horizontal: 28),
           padding: const EdgeInsets.all(24),
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: widget.isLocked ? AppColors.surfaceElevated : AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.card),
             border: Border.all(
-              color: widget.color.withOpacity(0.2),
+              color: widget.isLocked 
+                  ? AppColors.textDisabled.withOpacity(0.3)
+                  : widget.color.withOpacity(0.2),
               width: 1,
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Stack(
             children: [
-              Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.icon, style: const TextStyle(fontSize: 36)),
-                  const SizedBox(width: 16),
+                  Row(
+                    children: [
+                      Text(widget.icon, 
+                        style: TextStyle(
+                          fontSize: 36,
+                          color: widget.isLocked ? AppColors.textDisabled : null)),
+                      const SizedBox(width: 16),
+                      Text(
+                        widget.branch.label,
+                        style: GoogleFonts.playfairDisplay(
+                          fontSize: 26,
+                          fontWeight: FontWeight.w700,
+                          color: widget.isLocked ? AppColors.textDisabled : AppColors.textPrimary,
+                        ),
+                      ),
+                      const Spacer(),
+                      if (widget.isLocked)
+                        const Icon(Icons.lock, color: AppColors.textDisabled, size: 20),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
                   Text(
-                    widget.branch.label,
-                    style: GoogleFonts.playfairDisplay(
-                      fontSize: 26,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
+                    widget.description,
+                    style: GoogleFonts.inter(
+                      fontSize: 14,
+                      color: widget.isLocked ? AppColors.textDisabled : AppColors.textSecondary,
+                      height: 1.4,
                     ),
                   ),
                 ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                widget.description,
-                style: GoogleFonts.inter(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                  height: 1.4,
-                ),
               ),
             ],
           ),
