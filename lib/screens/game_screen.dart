@@ -9,6 +9,7 @@ import '../data/questions_data.dart';
 import '../data/actions_data.dart';
 import 'action_screen.dart';
 import 'results_screen.dart';
+import 'spin_wheel_screen.dart';
 import 'branch_selection_screen.dart';
 import 'paywall_screen.dart';
 
@@ -168,12 +169,28 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   void _onChangeBranch() {
     Navigator.pushReplacement(
       context,
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => const BranchSelectionScreen(),
-        transitionDuration: const Duration(milliseconds: 350),
-        transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
-      ),
+      MaterialPageRoute(builder: (_) => const BranchSelectionScreen()),
     );
+  }
+
+  void _triggerAction() {
+    if (_session.shouldTriggerAction) {
+      final action = ActionLibrary.getRandomAction(_session.currentLevel);
+      Navigator.push<bool>(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, __, ___) => ActionScreen(action: action),
+          transitionDuration: const Duration(milliseconds: 350),
+          transitionsBuilder: (_, a, __, child) => FadeTransition(opacity: a, child: child),
+        ),
+      ).then((result) {
+        if (result == true) _session.actionCompleted(action);
+        else _session.actionPassed(action);
+        _onDirection(true);
+      });
+    } else {
+      _onDirection(true);
+    }
   }
 
   void _goToResults() {
@@ -198,8 +215,18 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: FadeTransition(
-        opacity: _fade,
+      body: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 350),
+        transitionBuilder: (child, animation) => FadeTransition(
+          opacity: animation,
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0.02, 0.0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: child,
+          ),
+        ),
         child: _phase == 2 ? _buildDirection() : _buildAnswerScreen(_phase == 0),
       ),
     );
@@ -248,10 +275,33 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
-              Text(
-                '${_questionIndex + 1}/20',
-                style: GoogleFonts.inter(fontSize: 12, color: AppColors.textDisabled),
+              const SizedBox(width: 8),
+              // Heat score indicator
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(AppRadius.chip),
+                  border: Border.all(
+                    color: AppColors.accent.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text('🔥', style: const TextStyle(fontSize: 12)),
+                    const SizedBox(width: 4),
+                    Text(
+                      '${_session.spiceScore}',
+                      style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.accent,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(width: 6),
               GestureDetector(
@@ -384,95 +434,10 @@ class _GameScreenState extends State<GameScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildDirection() {
-    final lvl = _session.currentLevel;
-    final nextLvlLocked = lvl >= 2 && !_isPremium;
-    
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Next?',
-              style: GoogleFonts.playfairDisplay(
-                fontSize: 36, fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary, height: 1.0,
-              )),
-            const SizedBox(height: 8),
-            nextLvlLocked
-                ? Text('Unlock Premium to explore deeper levels.',
-                    style: GoogleFonts.inter(fontSize: 14, color: AppColors.textDisabled))
-                : Text(_levelHint(lvl),
-                    style: GoogleFonts.inter(fontSize: 14, color: AppColors.textSecondary)),
-
-            const SizedBox(height: 48),
-
-            // Hotter — main CTA (locked if not premium)
-            GestureDetector(
-              onTap: nextLvlLocked
-                  ? () async {
-                      final didUpgrade = await Navigator.push<bool>(
-                        context,
-                        MaterialPageRoute(builder: (_) => const PaywallScreen()),
-                      );
-                      if (didUpgrade == true) await _checkPremium();
-                    }
-                  : () => _onDirection(true),
-              child: _ConfirmButton(
-                label: nextLvlLocked ? '🔒 Unlock Premium' : '🌶️  Turn it up',
-                color: nextLvlLocked ? AppColors.textDisabled : AppColors.accent,
-                enabled: true,
-                onTap: null, // Handled by GestureDetector above
-                height: 62,
-                fontSize: 17,
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // Keep it easy — ghost button, less prominent
-            GestureDetector(
-              onTap: () => _onDirection(false),
-              child: Container(
-                width: double.infinity, height: 52,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(AppRadius.button),
-                  border: Border.all(color: AppColors.borderSubtle),
-                ),
-                child: Center(
-                  child: Text('Keep it easy',
-                    style: GoogleFonts.inter(
-                      fontSize: 15, color: AppColors.textDisabled,
-                      fontWeight: FontWeight.w400,
-                    )),
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // Change vibe
-            GestureDetector(
-              onTap: _onChangeBranch,
-              child: Container(
-                width: double.infinity, height: 52,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(AppRadius.button),
-                  border: Border.all(color: AppColors.borderSubtle),
-                ),
-                child: Center(
-                  child: Text('Change vibe →',
-                    style: GoogleFonts.inter(
-                      fontSize: 15, color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w500,
-                    )),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    return SpinWheelScreen(
+      onQuestion: () => _onDirection(true),
+      onAction: _triggerAction,
+      onWildCard: _onChangeBranch,
     );
   }
 

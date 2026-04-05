@@ -152,6 +152,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.3.0"
+  haptic_feedback:
+    dependency: "direct main"
+    description:
+      name: haptic_feedback
+      sha256: "3422bf2a55c541c9e3f029197b9a94d262d2dda19191a022eb310e5dd922e9e0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.1+2"
   http:
     dependency: transitive
     description:
